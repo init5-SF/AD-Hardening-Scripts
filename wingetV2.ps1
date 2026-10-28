@@ -1,10 +1,12 @@
-$wingetBinary = (Get-Command winget -All -CommandType Application -ErrorAction SilentlyContinue |
-    Select-Object -First 1).Source
+$wingetBinary = (Get-ChildItem "$env:ProgramFiles\WindowsApps" -Filter "winget.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1).Fullname
+
 
 if ($null -eq $wingetBinary) {
     Write-Error "winget.exe was not found. Aborting."
     return
 }
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ExcludedPackages = @(
     "SampleAppHere"
@@ -40,13 +42,14 @@ $packages = foreach ($line in $upgradeOutput) {
 }
 
 # Upgrade packages that are not excluded
+& $wingetBinary settings --enable BypassCertificatePinningForMicrosoftStore
 foreach ($package in $packages) {
     if ($ExcludedPackages -contains $package.Id) {
         Write-Host "Skipping excluded package: $($package.Id)"
         continue
     }
 
-    Write-Host "Upgrading: $($package.Id)"
+    Write-Host "Upgrading: $($package.Id)" -ForegroundColor Yellow
 
     & $wingetBinary upgrade $package.Id --accept-package-agreements --accept-source-agreements --include-unknown --nowarn --silent
 }
