@@ -1,3 +1,5 @@
+if ($($PSVersionTable.PSVersion.major) -ne 7) { Write-host -ForegroundColor Red "[!] Cannot continue - PowerShell 7 needed."; break }
+
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { 
     Write-host -ForegroundColor Red "[!] Cannot continue - No Admin privs."; break 
 }
