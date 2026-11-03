@@ -1,20 +1,24 @@
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { 
+    Write-host -ForegroundColor Red "[!] Cannot continue - No Admin privs."; break 
+}
+
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-$ConfirmPreference  = 'None'
+$ConfirmPreference = 'None'
 $ProgressPreference = 'SilentlyContinue'
 
 $NuGetMinimumVersion = [version]'2.8.5.201'
 
 $NuGetProvider = Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction SilentlyContinue |
-    Where-Object {
-        try {
-            [version]$_.Version -ge $NuGetMinimumVersion
-        }
-        catch {
-            $false
-        }
-    } |
-    Select-Object -First 1
+Where-Object {
+    try {
+        [version]$_.Version -ge $NuGetMinimumVersion
+    }
+    catch {
+        $false
+    }
+} |
+Select-Object -First 1
 
 if (-not $NuGetProvider) {
     Install-PackageProvider `
@@ -48,8 +52,4 @@ $ExcludedPackages = @(
 )
 
 Get-WinGetPackage |
-    Where-Object {
-        $_.IsUpdateAvailable -and
-        $_.Id -notin $ExcludedPackages
-    } |
-    Update-WinGetPackage -Force -IncludeUnknown -Mode Silent
+Where-Object { $_.IsUpdateAvailable -and $_.Id -notin $ExcludedPackages } | Update-WinGetPackage -Force -IncludeUnknown -Mode Silent
