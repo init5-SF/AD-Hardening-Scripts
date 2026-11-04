@@ -58,4 +58,4 @@ Where-Object { $_.IsUpdateAvailable -and $_.Id -notin $ExcludedPackages } | Upda
 
 
 # Scheduled task action
-# powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "if (Test-Path 'C:\Program Files\PowerShell\7\pwsh.exe') { & 'C:\Program Files\PowerShell\7\pwsh.exe' -NoProfile -ExecutionPolicy Bypass -File '\\contoso.local\SYSVOL\contoso.local\scripts\wingetPS.ps1' } else { & 'powershell.exe' -exec bypass -noprofile -file '\\contoso.local\SYSVOL\contoso.local\scripts\wingetUpgrade.ps1' }"
+# powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "if (Test-Path 'C:\Program Files\PowerShell\7\pwsh.exe') { & 'C:\Program Files\PowerShell\7\pwsh.exe' -NoProfile -w hidden -ExecutionPolicy Bypass -File '\\contoso.local\SYSVOL\contoso.local\scripts\wingetPS.ps1' } else { & 'powershell.exe' -exec bypass -w hidden -noprofile -file '\\contoso.local\SYSVOL\contoso.local\scripts\wingetUpgrade.ps1' }"
